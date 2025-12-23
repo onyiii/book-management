@@ -1,55 +1,119 @@
 "use client";
-import { useState } from "react";
-import { signup } from "../lib/api";
 
-export default function SignupPage() {
-  const [phoneNumber, setPhoneNumber] = useState("");
+import React, { useState } from "react";
+
+export default function RegisterPage() {
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("user");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  async function handle(e: any) {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const user = await signup({ phoneNumber, password, role });
-      localStorage.setItem("bm_user", JSON.stringify(user));
-      location.href = "/";
-    } catch (err: any) {
-      alert(err.message || "Sign up failed");
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
     }
-  }
+
+    setLoading(true);
+
+    // TODO: connect to backend API
+    console.log({ fullName, phone, password });
+
+    setTimeout(() => {
+      setLoading(false);
+      alert("Account created (connect backend next)");
+    }, 1000);
+  };
 
   return (
-    <div className="max-w-md mx-auto">
-      <h2 className="text-2xl mb-4">Create account</h2>
-      <form onSubmit={handle} className="space-y-3">
-        <input
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          placeholder="Phone number"
-          className="w-full p-2 border rounded"
-        />
-        <input
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          type="password"
-          placeholder="Password"
-          className="w-full p-2 border rounded"
-        />
-        <div>
-          <label className="mr-2">Role</label>
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="p-2 border rounded"
-          >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-serif">Create Account</h1>
+          <p className="text-gray-600 mt-2">
+            Start managing your book collection
+          </p>
         </div>
-        <button className="w-full py-2 bg-green-600 text-white rounded">
-          Sign up
-        </button>
-      </form>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Full Name
+            </label>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              placeholder="+2348012345678"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 rounded-md transition disabled:opacity-60"
+          >
+            {loading ? "Creating account..." : "Create Account"}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <div className="text-center text-sm text-gray-600 mt-6">
+          Already have an account?{" "}
+          <a
+            href="/login"
+            className="text-yellow-600 font-medium hover:underline"
+          >
+            Log in
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
